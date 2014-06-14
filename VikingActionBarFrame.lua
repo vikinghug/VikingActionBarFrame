@@ -29,7 +29,7 @@ function Vikingbar:Init()
 end
 
 function Vikingbar:OnLoad()
-	self.xmlDoc = XmlDoc.CreateFromFile("Vikingbar.xml")
+	self.xmlDoc = XmlDoc.CreateFromFile("VikingActionBarFrame.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 end
 

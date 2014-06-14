@@ -1,5 +1,0 @@
-<Addon Author="VikingHug-Iglo" APIVersion="3" Name="VikingBar" Description="Replaces the Actionbar" Version="1">
-    <Script Name="Vikingbar.lua"/>
-    <Form Name="Vikingbar.xml"/>
-    <ReplaceAddon Name="ActionBarFrame"/>
-</Addon>

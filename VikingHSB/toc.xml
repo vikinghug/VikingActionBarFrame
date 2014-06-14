@@ -1,5 +1,0 @@
-<Addon Name="VikingHSB" Version="1" Author="VikingHug-Iglo" APIVersion="8" Description="Replacement for the HealthShieldBar">
-    <Script Name="VikingHSB.lua"/>
-    <Form Name="VikingHSB.xml"/>
-    <ReplaceAddon Name="HealthShieldBar"/>
-</Addon>
