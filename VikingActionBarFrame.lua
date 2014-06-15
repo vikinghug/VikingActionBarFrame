@@ -84,7 +84,7 @@ function Vikingbar:OnDocumentReady()
 	self.wndMountFlyout:Show(false)
 	self.wndPotionFlyout:Show(false)
 
-	-- TODO: Figure out why Stances, Mounts and Potions break w/o this hack.
+	-- TODO: Figure out why Stances, Mounts and Potions break w/o this hack darnit.
 	Apollo.RegisterTimerHandler("ActionBarFrameTimer_DelayedInit", "OnCharacterCreated", self)
 	Apollo.CreateTimer("ActionBarFrameTimer_DelayedInit", 0.5, false)
 	Apollo.StartTimer("ActionBarFrameTimer_DelayedInit")
