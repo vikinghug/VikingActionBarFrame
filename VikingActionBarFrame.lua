@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------------------
--- Client Lua Script for Vikingbar
+-- Client Lua Script for VikingActionBarFrame
 -- Copyright (c) NCsoft. All rights reserved
 -----------------------------------------------------------------------------------------------
 
@@ -15,25 +15,25 @@ require "ActionSetLib"
 require "AttributeMilestonesLib"
 require "Tooltip"
 
-local Vikingbar = {}
+local VikingActionBarFrame = {}
 
-function Vikingbar:new(o)
+function VikingActionBarFrame:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
     return o
 end
 
-function Vikingbar:Init()
+function VikingActionBarFrame:Init()
     Apollo.RegisterAddon(self)
 end
 
-function Vikingbar:OnLoad()
+function VikingActionBarFrame:OnLoad()
 	self.xmlDoc = XmlDoc.CreateFromFile("VikingActionBarFrame.xml")
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 end
 
-function Vikingbar:OnDocumentReady()
+function VikingActionBarFrame:OnDocumentReady()
 	g_ActionBarLoaded = false
 
 	Apollo.RegisterEventHandler("UnitEnteredCombat", 						"OnUnitEnteredCombat", self)
@@ -96,7 +96,7 @@ function Vikingbar:OnDocumentReady()
 	end
 end
 
-function Vikingbar:OnSave(eType)
+function VikingActionBarFrame:OnSave(eType)
 	if eType ~= GameLib.CodeEnumAddonSaveLevel.Character then
 		return
 	end
@@ -111,7 +111,7 @@ function Vikingbar:OnSave(eType)
 	return tSavedData
 end
 
-function Vikingbar:OnRestore(eType, tSavedData)
+function VikingActionBarFrame:OnRestore(eType, tSavedData)
 	if eType ~= GameLib.CodeEnumAddonSaveLevel.Character then
 		return
 	end
@@ -129,14 +129,14 @@ function Vikingbar:OnRestore(eType, tSavedData)
 	end
 end
 
-function Vikingbar:OnPlayerEquippedItemChanged()
+function VikingActionBarFrame:OnPlayerEquippedItemChanged()
 	local nVisibility = Apollo.GetConsoleVariable("hud.skillsBarDisplay")
 	if (nVisibility == nil or nVisibility < 1) and self:IsWeaponEquipped() then
 		Event_FireGenericEvent("OptionsUpdated_HUDTriggerTutorial", "skillsBarDisplay")
 	end
 end
 
-function Vikingbar:IsWeaponEquipped()
+function VikingActionBarFrame:IsWeaponEquipped()
 	local unitPlayer = GameLib.GetPlayerUnit()
 	
 	local tEquipment = unitPlayer and unitPlayer:IsValid() and unitPlayer:GetEquippedItems() or {}
@@ -149,7 +149,7 @@ function Vikingbar:IsWeaponEquipped()
 	return false
 end
 
-function Vikingbar:OnUnitEnteredCombat(unit)
+function VikingActionBarFrame:OnUnitEnteredCombat(unit)
 	if unit ~= GameLib.GetPlayerUnit() then
 		return
 	end
@@ -157,7 +157,7 @@ function Vikingbar:OnUnitEnteredCombat(unit)
 	self:RedrawBarVisibility()
 end
 
-function Vikingbar:InitializeBars()
+function VikingActionBarFrame:InitializeBars()
 	self:RedrawStances()
 	self:RedrawMounts()
 	self:RedrawPotions()
@@ -214,7 +214,7 @@ function Vikingbar:InitializeBars()
 			wndCurr:FindChild("Shadow"):Show(true)
 
 			if ActionSetLib.IsSlotUnlocked(idx - 1) ~= ActionSetLib.CodeEnumLimitedActionSetResult.Ok then
-				wndCurr:SetTooltip(idx == 9 and Apollo.GetString("Vikingbar_LockedGadgetSlot") or Apollo.GetString("Vikingbar_LockedPathSlot"))
+				wndCurr:SetTooltip(idx == 9 and Apollo.GetString("VikingActionBarFrame_LockedGadgetSlot") or Apollo.GetString("VikingActionBarFrame_LockedPathSlot"))
 			end
 		elseif idx < 23 then -- 11 to 22
 			wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemSmall", self.wndBar2, self)
@@ -247,7 +247,7 @@ function Vikingbar:InitializeBars()
 	self:RedrawBarVisibility()
 end
 
-function Vikingbar:RedrawBarVisibility()
+function VikingActionBarFrame:RedrawBarVisibility()
 	local unitPlayer = GameLib.GetPlayerUnit()
 	local bActionBarShown = self.wndMain:IsShown()
 
@@ -348,7 +348,7 @@ end
 -----------------------------------------------------------------------------------------------
 -- Main Redraw
 -----------------------------------------------------------------------------------------------
-function Vikingbar:RedrawStances()
+function VikingActionBarFrame:RedrawStances()
 	local wndStancePopout = self.wndStancePopoutFrame:FindChild("StancePopoutList")
 	wndStancePopout:DestroyChildren()
 
@@ -375,16 +375,16 @@ function Vikingbar:RedrawStances()
 	self.wndMain:FindChild("StancePopoutBtn"):Show(#wndStancePopout:GetChildren() > 0)
 end
 
-function Vikingbar:OnStanceBtn(wndHandler, wndControl)
+function VikingActionBarFrame:OnStanceBtn(wndHandler, wndControl)
 	self.wndMain:FindChild("StancePopoutFrame"):Show(false)
 	GameLib.SetCurrentClassInnateAbilityIndex(wndHandler:GetData())
 end
 
-function Vikingbar:RedrawSelectedMounts()
+function VikingActionBarFrame:RedrawSelectedMounts()
 	GameLib.SetShortcutMount(self.nSelectedMount)
 end
 
-function Vikingbar:RedrawMounts()
+function VikingActionBarFrame:RedrawMounts()
 	local wndPopoutFrame = self.wndMountFlyout:FindChild("MountPopoutFrame")
 	local wndMountPopout = wndPopoutFrame:FindChild("MountPopoutList")
 	wndMountPopout:DestroyChildren()
@@ -434,14 +434,14 @@ function Vikingbar:RedrawMounts()
 	end
 end
 
-function Vikingbar:OnMountBtn(wndHandler, wndControl)
+function VikingActionBarFrame:OnMountBtn(wndHandler, wndControl)
 	self.nSelectedMount = wndControl:GetData():GetId()
 
 	self.wndMountFlyout:FindChild("MountPopoutFrame"):Show(true)
 	self:RedrawSelectedMounts()
 end
 
-function Vikingbar:RedrawPotions()
+function VikingActionBarFrame:RedrawPotions()
 	local unitPlayer = GameLib.GetPlayerUnit()
 	
 	local wndPotionPopout = self.wndPotionPopoutFrame:FindChild("PotionPopoutList")
@@ -510,14 +510,14 @@ function Vikingbar:RedrawPotions()
 	self.wndPotionFlyout:Show(nCount > 0)
 end
 
-function Vikingbar:OnPotionBtn(wndHandler, wndControl)
+function VikingActionBarFrame:OnPotionBtn(wndHandler, wndControl)
 	self.nSelectedPotion = wndControl:GetData():GetItemId()
 
 	self.wndPotionPopoutFrame:Show(false)
 	self:RedrawPotions()
 end
 
-function Vikingbar:OnShowActionBarShortcut(nWhichBar, bIsVisible, nNumShortcuts)
+function VikingActionBarFrame:OnShowActionBarShortcut(nWhichBar, bIsVisible, nNumShortcuts)
 	if nWhichBar == 0 and self.wndMain and self.wndMain:IsValid() then
 		if self.arBarButtons then
 			for idx, wndBtn in pairs(self.arBarButtons) do
@@ -529,12 +529,12 @@ function Vikingbar:OnShowActionBarShortcut(nWhichBar, bIsVisible, nNumShortcuts)
 	end
 end
 
-function Vikingbar:OnShowActionBarShortcutDocked(bVisible)
+function VikingActionBarFrame:OnShowActionBarShortcutDocked(bVisible)
 	self.wndArt:FindChild("BarFrameShortcut"):Show(bVisible, not bVisible)
 	self:RedrawBarVisibility()
 end
 
-function Vikingbar:ShowVehicleBar(nWhichBar, bIsVisible, nNumShortcuts)
+function VikingActionBarFrame:ShowVehicleBar(nWhichBar, bIsVisible, nNumShortcuts)
 	if nWhichBar ~= 0 or not self.wndMain or not self.wndMain:IsValid() then
 		return
 	end
@@ -574,13 +574,13 @@ function Vikingbar:ShowVehicleBar(nWhichBar, bIsVisible, nNumShortcuts)
 	end
 end
 
-function Vikingbar:OnUpdateActionBarTooltipLocation()
+function VikingActionBarFrame:OnUpdateActionBarTooltipLocation()
 	for idx = 0, 10 do
 		self:HelperSetTooltipType(self.arBarButtons[idx])
 	end
 end
 
-function Vikingbar:HelperSetTooltipType(wnd)
+function VikingActionBarFrame:HelperSetTooltipType(wnd)
 	if Apollo.GetConsoleVariable("ui.actionBarTooltipsOnCursor") then
 		wnd:SetTooltipType(Window.TPT_OnCursor)
 	else
@@ -588,7 +588,7 @@ function Vikingbar:HelperSetTooltipType(wnd)
 	end
 end
 
-function Vikingbar:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
+function VikingActionBarFrame:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
 	if eAnchor == GameLib.CodeEnumTutorialAnchor.AbilityBar or eAnchor == GameLib.CodeEnumTutorialAnchor.InnateAbility then
 		local tRect = {}
 		tRect.l, tRect.t, tRect.r, tRect.b = self.wndMain:GetRect()
@@ -596,7 +596,7 @@ function Vikingbar:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
 	end
 end
 
-function Vikingbar:OnUpdateInventory()
+function VikingActionBarFrame:OnUpdateInventory()
 	local unitPlayer = GameLib.GetPlayerUnit()
 	
 	if self.nPotionCount == nil then
@@ -630,7 +630,7 @@ function Vikingbar:OnUpdateInventory()
 	end
 end
 
-function Vikingbar:OnGenerateTooltip(wndControl, wndHandler, eType, arg1, arg2)
+function VikingActionBarFrame:OnGenerateTooltip(wndControl, wndHandler, eType, arg1, arg2)
 	local xml = nil
 	if eType == Tooltip.TooltipGenerateType_ItemInstance then -- Doesn't need to compare to item equipped
 		Tooltip.GetItemTooltipForm(self, wndControl, arg1, {})
@@ -655,11 +655,11 @@ function Vikingbar:OnGenerateTooltip(wndControl, wndHandler, eType, arg1, arg2)
 	end
 end
 
-function Vikingbar:OnActionBarNonSpellShortcutAddFailed()
+function VikingActionBarFrame:OnActionBarNonSpellShortcutAddFailed()
 	--TODO: Print("You can not add that to your Limited Action Set bar.")
 end
 
-function Vikingbar:OnCharacterCreated()
+function VikingActionBarFrame:OnCharacterCreated()
 	local unitPlayer = GameLib.GetPlayerUnit()
 	
 	if not self.bCharacterLoaded and unitPlayer and unitPlayer:IsValid() then
@@ -678,5 +678,5 @@ function Vikingbar:OnCharacterCreated()
 	end
 end
 
-local VikingbarInst = Vikingbar:new()
-VikingbarInst:Init()
+local VikingActionBarFrameInst = VikingActionBarFrame:new()
+VikingActionBarFrameInst:Init()
