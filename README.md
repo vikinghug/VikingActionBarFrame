@@ -6,7 +6,6 @@
 * [VikingActionBarShortcut] (https://github.com/vikinghug/VikingActionBarShortcut)
 * [VikingClassResources] (https://github.com/vikinghug/VikingClassResources)
 * [VikingMedic] (https://github.com/vikinghug/VikingMedic)
-* [VikingPathAbilityPicker] ()
 * [VikingRecallFrame] (https://github.com/vikinghug/VikingRecallFrame)
 * [VikingStalkerResources] (https://github.com/vikinghug/VikingStalkerResource)
 * [VikingWarriorResources] (https://github.com/vikinghug/VikingWarriorResource)
