@@ -58,7 +58,6 @@ function VikingActionBarFrame:OnDocumentReady()
   Apollo.RegisterEventHandler("UpdateInventory",              "OnUpdateInventory", self)
 
   self.wndShadow = Apollo.LoadForm(self.xmlDoc, "Shadow", "FixedHudStratumLow", self)
-  self.wndArt = Apollo.LoadForm(self.xmlDoc, "Art", "FixedHudStratumLow", self)
   self.wndBar2 = Apollo.LoadForm(self.xmlDoc, "Bar2ButtonContainer", "FixedHudStratum", self)
   self.wndBar3 = Apollo.LoadForm(self.xmlDoc, "Bar3ButtonContainer", "FixedHudStratum", self)
 
@@ -79,10 +78,9 @@ function VikingActionBarFrame:OnDocumentReady()
   self.nSelectedMount = nil
   self.nSelectedPotion = nil
 
-  self.wndMountFlyout = Apollo.LoadForm(self.xmlDoc, "MountFlyout", nil, self)
+  self.wndMountFlyout = self.wndMain:FindChild("MountFlyout")
   self.wndMountFlyout:FindChild("MountPopoutBtn"):AttachWindow(self.wndMountFlyout:FindChild("MountPopoutFrame"))
 
-  self.wndArt:Show(false)
   self.wndMain:Show(false)
   self.wndMountFlyout:Show(false)
   self.wndPotionFlyout:Show(false)
@@ -179,7 +177,6 @@ function VikingActionBarFrame:InitializeBars()
     end
   end
 
-  self.wndArt:Show(true)
   self.wndMain:Show(true)
   self.wndBar1:DestroyChildren()
   self.wndBar2:DestroyChildren()
@@ -327,11 +324,9 @@ function VikingActionBarFrame:RedrawBarVisibility()
   end
 
   local bActionBarShown = self.wndMain:IsShown()
-  local bFloatingActionBarShown = self.wndArt:FindChild("BarFrameShortcut"):IsShown()
 
   self.wndShadow:SetOpacity(0.5)
   self.wndShadow:Show(true)
-  self.wndArt:Show(bActionBarShown)
   self.wndPotionFlyout:Show(self.wndPotionFlyout:IsShown() and unitPlayer and not unitPlayer:IsInVehicle())
 
   local nLeft, nTop, nRight, nBottom = g_wndActionBarResources:GetAnchorOffsets()
@@ -531,7 +526,6 @@ function VikingActionBarFrame:OnShowActionBarShortcut(nWhichBar, bIsVisible, nNu
 end
 
 function VikingActionBarFrame:OnShowActionBarShortcutDocked(bVisible)
-  self.wndArt:FindChild("BarFrameShortcut"):Show(bVisible, not bVisible)
   self:RedrawBarVisibility()
 end
 
