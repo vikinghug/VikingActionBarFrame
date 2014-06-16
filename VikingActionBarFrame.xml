@@ -149,4 +149,5 @@
         </Control>
         <Control Class="Window" LAnchorPoint="0" LAnchorOffset="4" TAnchorPoint="0" TAnchorOffset="4" RAnchorPoint="0" RAnchorOffset="54" BAnchorPoint="1" BAnchorOffset="-14" RelativeToClient="1" Font="Default" Text="" Template="Default" TooltipType="OnCursor" Name="Shadow" BGColor="99141122" TextColor="ffffffff" TooltipColor="" Picture="1" IgnoreMouse="1" Sprite="BasicSprites:WhiteFill" Tooltip="" TooltipId="" TooltipFont="CRB_InterfaceSmall_O" HideInEditor="0" NewWindowDepth="1"/>
     </Form>
+    <SpriteFile Name="VikingActionBarFrameSprites.xml"/>
 </Forms>

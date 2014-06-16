@@ -31,6 +31,9 @@ end
 function VikingActionBarFrame:OnLoad()
   self.xmlDoc = XmlDoc.CreateFromFile("VikingActionBarFrame.xml")
   self.xmlDoc:RegisterCallback("OnDocumentReady", self)
+
+  -- Load our sprites
+  Apollo.LoadSprites("VikingGroupFrameSprites.xml")
 end
 
 function VikingActionBarFrame:OnDocumentReady()
