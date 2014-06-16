@@ -59,7 +59,7 @@ function VikingActionBarFrame:OnDocumentReady()
   self.wndBar2 = Apollo.LoadForm(self.xmlDoc, "Bar2ButtonContainer", "FixedHudStratum", self)
   self.wndBar3 = Apollo.LoadForm(self.xmlDoc, "Bar3ButtonContainer", "FixedHudStratum", self)
 
-  self.wndMain = Apollo.LoadForm(self.xmlDoc, "VikingbarForm", "FixedHudStratum", self)
+  self.wndMain = Apollo.LoadForm(self.xmlDoc, "ActionBarFrameForm", "FixedHudStratum", self)
   self.wndBar1 = self.wndMain:FindChild("Bar1ButtonContainer")
 
   self.wndStancePopoutFrame = self.wndMain:FindChild("StancePopoutFrame")
