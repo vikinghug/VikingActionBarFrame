@@ -33,7 +33,7 @@ function VikingActionBarFrame:OnLoad()
   self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 
   -- Load our sprites
-  Apollo.LoadSprites("VikingGroupFrameSprites.xml")
+  Apollo.LoadSprites("VikingActionBarFrameSprites.xml")
 end
 
 function VikingActionBarFrame:OnDocumentReady()
@@ -372,7 +372,8 @@ function VikingActionBarFrame:RedrawStances()
   local nHeight = wndStancePopout:ArrangeChildrenVert(0)
   local nLeft, nTop, nRight, nBottom = self.wndStancePopoutFrame:GetAnchorOffsets()
   self.wndStancePopoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight - 98, nRight, nBottom)
-  self.wndMain:FindChild("StancePopoutBtn"):Show(#wndStancePopout:GetChildren() > 0)
+  -- self.wndMain:FindChild("StancePopoutBtn"):Show(#wndStancePopout:GetChildren() > 0)
+  self.wndMain:FindChild("StancePopoutBtn"):Show(true)
 end
 
 function VikingActionBarFrame:OnStanceBtn(wndHandler, wndControl)
