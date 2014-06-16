@@ -201,11 +201,9 @@ function VikingActionBarFrame:InitializeBars()
       if ActionSetLib.IsSlotUnlocked(idx - 1) ~= ActionSetLib.CodeEnumLimitedActionSetResult.Ok then
         wndCurr:FindChild("LockSprite"):Show(true)
         wndCurr:FindChild("Cover"):Show(false)
-        wndCurr:FindChild("Shadow"):Show(false)
       else
         wndCurr:FindChild("LockSprite"):Show(false)
         wndCurr:FindChild("Cover"):Show(true)
-        wndCurr:FindChild("Shadow"):Show(true)
       end
     elseif idx < 11 then -- 9 to 10
       wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemMed", self.wndMain:FindChild("Bar1ButtonSmallContainer:Buttons"), self)
@@ -214,7 +212,6 @@ function VikingActionBarFrame:InitializeBars()
 
       wndCurr:FindChild("LockSprite"):Show(false)
       wndCurr:FindChild("Cover"):Show(true)
-      wndCurr:FindChild("Shadow"):Show(true)
 
       if ActionSetLib.IsSlotUnlocked(idx - 1) ~= ActionSetLib.CodeEnumLimitedActionSetResult.Ok then
         wndCurr:SetTooltip(idx == 9 and Apollo.GetString("VikingActionBarFrame_LockedGadgetSlot") or Apollo.GetString("VikingActionBarFrame_LockedPathSlot"))
