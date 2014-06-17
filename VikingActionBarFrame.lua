@@ -211,7 +211,7 @@ function VikingActionBarFrame:InitializeBars()
       wndCurr:FindChild("Cover"):Show(true)
 
       if ActionSetLib.IsSlotUnlocked(idx - 1) ~= ActionSetLib.CodeEnumLimitedActionSetResult.Ok then
-        wndCurr:SetTooltip(idx == 9 and Apollo.GetString("VikingActionBarFrame_LockedGadgetSlot") or Apollo.GetString("VikingActionBarFrame_LockedPathSlot"))
+        wndCurr:SetTooltip(idx == 9 and Apollo.GetString("ActionBarFrame_LockedGadgetSlot") or Apollo.GetString("VikingActionBarFrame_LockedPathSlot"))
       end
     elseif idx < 23 then -- 11 to 22
       wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemSmall", self.wndBar2, self)
