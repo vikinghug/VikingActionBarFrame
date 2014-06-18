@@ -211,7 +211,7 @@ function VikingActionBarFrame:InitializeBars()
       wndCurr:FindChild("Cover"):Show(true)
 
       if ActionSetLib.IsSlotUnlocked(idx - 1) ~= ActionSetLib.CodeEnumLimitedActionSetResult.Ok then
-        wndCurr:SetTooltip(idx == 9 and Apollo.GetString("VikingActionBarFrame_LockedGadgetSlot") or Apollo.GetString("VikingActionBarFrame_LockedPathSlot"))
+        wndCurr:SetTooltip(idx == 9 and Apollo.GetString("ActionBarFrame_LockedGadgetSlot") or Apollo.GetString("VikingActionBarFrame_LockedPathSlot"))
       end
     elseif idx < 23 then -- 11 to 22
       wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemSmall", self.wndBar2, self)
@@ -309,7 +309,13 @@ function VikingActionBarFrame:RedrawBarVisibility()
     self.wndBar3:Show(false)
   end
 
-  if next(self.wndMountFlyout:FindChild("MountPopoutList"):GetChildren()) ~= nil then
+
+  -- Why draw the mount button if we don't have a mount?
+  local tMountList = AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Mount)
+
+  if #tMountList == 0 then
+    self.wndMountFlyout:Show(false)
+  elseif next(self.wndMountFlyout:FindChild("MountPopoutList"):GetChildren()) ~= nil then
     if nMountVisibility == 2 then --always off
       self.wndMountFlyout:Show(false)
     elseif nMountVisibility == 3 then --on in combat
@@ -387,6 +393,7 @@ function VikingActionBarFrame:RedrawMounts()
 
   local tMountList = AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Mount) or {}
   local tSelectedSpellObj = nil
+
 
   for idx, tMountData  in pairs(tMountList) do
     local tSpellObject = tMountData.tTiers[1].splObject
