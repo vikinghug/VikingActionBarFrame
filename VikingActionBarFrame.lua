@@ -14,8 +14,10 @@ require "AbilityBook"
 require "ActionSetLib"
 require "AttributeMilestonesLib"
 require "Tooltip"
+--require "ChatSystemLib"
 
 local VikingActionBarFrame = {}
+local VikingTooltipCursor = false
 
 function VikingActionBarFrame:new(o)
     o = o or {}
@@ -56,6 +58,9 @@ function VikingActionBarFrame:OnDocumentReady()
   Apollo.RegisterEventHandler("Options_UpdateActionBarTooltipLocation",   "OnUpdateActionBarTooltipLocation", self)
   Apollo.RegisterEventHandler("ActionBarNonSpellShortcutAddFailed",     "OnActionBarNonSpellShortcutAddFailed", self)
   Apollo.RegisterEventHandler("UpdateInventory",              "OnUpdateInventory", self)
+
+	--Test solution tooltip with slashcommand
+  Apollo.RegisterSlashCommand("VTooltip", "OnVikingTooltipOn", self)
 
   self.wndShadow = Apollo.LoadForm(self.xmlDoc, "Shadow", "FixedHudStratumLow", self)
   self.wndBar2 = Apollo.LoadForm(self.xmlDoc, "Bar2ButtonContainer", "FixedHudStratum", self)
@@ -576,6 +581,24 @@ function VikingActionBarFrame:ShowVehicleBar(nWhichBar, bIsVisible, nNumShortcut
   end
 end
 
+-- Solution for tooltip at cursor option
+-- on SlashCommand "/VTooltip"
+
+function VikingActionBarFrame:OnVikingTooltipOn()
+
+	if VikingTooltipCursor == false then
+	VikingTooltipCursor = true
+	ChatSystemLib.PostOnChannel(2,"VikinghugUI_ActionBar: ToolTip will show at Cursor")
+	else
+	VikingTooltipCursor = false
+	ChatSystemLib.PostOnChannel(2,"VikinghugUI_ActionBar: ToolTip will not show at Cursor")
+	end
+	
+	Event_FireGenericEvent("Options_UpdateActionBarTooltipLocation")
+	
+	
+end
+
 function VikingActionBarFrame:OnUpdateActionBarTooltipLocation()
   for idx = 0, 10 do
     self:HelperSetTooltipType(self.arBarButtons[idx])
@@ -583,12 +606,13 @@ function VikingActionBarFrame:OnUpdateActionBarTooltipLocation()
 end
 
 function VikingActionBarFrame:HelperSetTooltipType(wnd)
-  if Apollo.GetConsoleVariable("ui.actionBarTooltipsOnCursor") then
+  if VikingTooltipCursor == true then
     wnd:SetTooltipType(Window.TPT_OnCursor)
   else
     wnd:SetTooltipType(Window.TPT_DynamicFloater)
   end
 end
+
 
 function VikingActionBarFrame:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
   if eAnchor == GameLib.CodeEnumTutorialAnchor.AbilityBar or eAnchor == GameLib.CodeEnumTutorialAnchor.InnateAbility then
