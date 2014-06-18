@@ -14,7 +14,7 @@ require "AbilityBook"
 require "ActionSetLib"
 require "AttributeMilestonesLib"
 require "Tooltip"
---require "ChatSystemLib"
+
 
 local VikingActionBarFrame = {}
 local VikingTooltipCursor = false
