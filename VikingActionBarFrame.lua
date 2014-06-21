@@ -438,7 +438,7 @@ function VikingActionBarFrame:RedrawMounts()
     wndPopoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight - 98, nRight, nBottom)
     self:RedrawBarVisibility()
   else
-    self.wndMountFlyout:Show(true)
+    self.wndMountFlyout:Show(false)
   end
 end
 
@@ -447,6 +447,7 @@ function VikingActionBarFrame:OnMountBtn(wndHandler, wndControl)
 
   self.wndMountFlyout:FindChild("MountPopoutFrame"):Show(true)
   self:RedrawSelectedMounts()
+  self.wndMountFlyout:FindChild("MountPopoutFrame"):Show(false)
 end
 
 function VikingActionBarFrame:RedrawPotions()
