@@ -318,7 +318,7 @@ function VikingActionBarFrame:RedrawBarVisibility()
   -- Why draw the mount button if we don't have a mount?
   local tMountList = AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Mount)
 
-  if #tMountList == 0 then
+  if next(tMountList) == nil then
     self.wndMountFlyout:Show(false)
     elseif next(self.wndMountFlyout:FindChild("MountPopoutList"):GetChildren()) ~= nil then
     if nMountVisibility == 2 then --always off
