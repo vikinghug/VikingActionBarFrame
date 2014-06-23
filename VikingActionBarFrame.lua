@@ -20,14 +20,14 @@ local VikingActionBarFrame = {}
 local VikingTooltipCursor = false
 
 function VikingActionBarFrame:new(o)
-    o = o or {}
-    setmetatable(o, self)
-    self.__index = self
-    return o
+  o = o or {}
+  setmetatable(o, self)
+  self.__index = self
+  return o
 end
 
 function VikingActionBarFrame:Init()
-    Apollo.RegisterAddon(self)
+  Apollo.RegisterAddon(self)
 end
 
 function VikingActionBarFrame:OnLoad()
@@ -109,12 +109,12 @@ function VikingActionBarFrame:OnSave(eType)
 
   local tSavedData =
   {
-    nSelectedMount = self.nSelectedMount,
-    nSelectedPotion = self.nSelectedPotion,
-    tVehicleBar = self.tCurrentVehicleInfo
-  }
+  nSelectedMount = self.nSelectedMount,
+  nSelectedPotion = self.nSelectedPotion,
+  tVehicleBar = self.tCurrentVehicleInfo
+}
 
-  return tSavedData
+return tSavedData
 end
 
 function VikingActionBarFrame:OnRestore(eType, tSavedData)
@@ -320,7 +320,7 @@ function VikingActionBarFrame:RedrawBarVisibility()
 
   if #tMountList == 0 then
     self.wndMountFlyout:Show(false)
-  elseif next(self.wndMountFlyout:FindChild("MountPopoutList"):GetChildren()) ~= nil then
+    elseif next(self.wndMountFlyout:FindChild("MountPopoutList"):GetChildren()) ~= nil then
     if nMountVisibility == 2 then --always off
       self.wndMountFlyout:Show(false)
     elseif nMountVisibility == 3 then --on in combat
@@ -576,10 +576,10 @@ function VikingActionBarFrame:ShowVehicleBar(nWhichBar, bIsVisible, nNumShortcut
 
     self.tCurrentVehicleInfo =
     {
-      nBar = nWhichBar,
-      nNumShortcuts = nNumShortcuts,
-    }
-  end
+    nBar = nWhichBar,
+    nNumShortcuts = nNumShortcuts,
+  }
+end
 end
 
 -- Solution for tooltip at cursor option
@@ -588,16 +588,16 @@ end
 function VikingActionBarFrame:OnVikingTooltipOn()
 
 	if VikingTooltipCursor == false then
-	VikingTooltipCursor = true
-	ChatSystemLib.PostOnChannel(2,"VikinghugUI_ActionBar: ToolTip will show at Cursor")
-	else
-	VikingTooltipCursor = false
-	ChatSystemLib.PostOnChannel(2,"VikinghugUI_ActionBar: ToolTip will not show at Cursor")
-	end
-	
-	Event_FireGenericEvent("Options_UpdateActionBarTooltipLocation")
-	
-	
+   VikingTooltipCursor = true
+   ChatSystemLib.PostOnChannel(2,"VikinghugUI_ActionBar: ToolTip will show at Cursor")
+ else
+   VikingTooltipCursor = false
+   ChatSystemLib.PostOnChannel(2,"VikinghugUI_ActionBar: ToolTip will not show at Cursor")
+ end
+ 
+ Event_FireGenericEvent("Options_UpdateActionBarTooltipLocation")
+ 
+ 
 end
 
 function VikingActionBarFrame:OnUpdateActionBarTooltipLocation()
@@ -663,26 +663,26 @@ function VikingActionBarFrame:OnGenerateTooltip(wndControl, wndHandler, eType, a
     Tooltip.GetItemTooltipForm(self, wndControl, arg1, {})
   elseif eType == Tooltip.TooltipGenerateType_ItemData then -- Doesn't need to compare to item equipped
     Tooltip.GetItemTooltipForm(self, wndControl, arg1, {})
-  elseif eType == Tooltip.TooltipGenerateType_GameCommand then
-    xml = XmlDoc.new()
-    xml:AddLine(arg2)
-    wndControl:SetTooltipDoc(xml)
-  elseif eType == Tooltip.TooltipGenerateType_Macro then
-    xml = XmlDoc.new()
-    xml:AddLine(arg1)
-    wndControl:SetTooltipDoc(xml)
-  elseif eType == Tooltip.TooltipGenerateType_Spell then
-    if Tooltip ~= nil and Tooltip.GetSpellTooltipForm ~= nil then
-      Tooltip.GetSpellTooltipForm(self, wndControl, arg1)
-    end
-  elseif eType == Tooltip.TooltipGenerateType_PetCommand then
-    xml = XmlDoc.new()
-    xml:AddLine(arg2)
-    wndControl:SetTooltipDoc(xml)
-  end
-end
+    elseif eType == Tooltip.TooltipGenerateType_GameCommand then
+      xml = XmlDoc.new()
+      xml:AddLine(arg2)
+      wndControl:SetTooltipDoc(xml)
+      elseif eType == Tooltip.TooltipGenerateType_Macro then
+        xml = XmlDoc.new()
+        xml:AddLine(arg1)
+        wndControl:SetTooltipDoc(xml)
+        elseif eType == Tooltip.TooltipGenerateType_Spell then
+          if Tooltip ~= nil and Tooltip.GetSpellTooltipForm ~= nil then
+            Tooltip.GetSpellTooltipForm(self, wndControl, arg1)
+          end
+          elseif eType == Tooltip.TooltipGenerateType_PetCommand then
+            xml = XmlDoc.new()
+            xml:AddLine(arg2)
+            wndControl:SetTooltipDoc(xml)
+          end
+        end
 
-function VikingActionBarFrame:OnActionBarNonSpellShortcutAddFailed()
+        function VikingActionBarFrame:OnActionBarNonSpellShortcutAddFailed()
   --TODO: Print("You can not add that to your Limited Action Set bar.")
 end
 
