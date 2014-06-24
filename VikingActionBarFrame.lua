@@ -594,8 +594,7 @@ function VikingActionBarFrame:OnVikingTooltipOn()
 	ChatSystemLib.PostOnChannel(2,"VikinghugUI_ActionBar: ToolTip will not show at Cursor")
 	end
 
-	Event_FireGenericEvent("Options_UpdateActionBarTooltipLocation")
-
+  Event_FireGenericEvent("Options_UpdateActionBarTooltipLocation")
 
 end
 
