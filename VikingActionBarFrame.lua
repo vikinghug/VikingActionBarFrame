@@ -377,7 +377,7 @@ function VikingActionBarFrame:RedrawStances()
 
   local nHeight = wndStancePopout:ArrangeChildrenVert(0)
   local nLeft, nTop, nRight, nBottom = self.wndStancePopoutFrame:GetAnchorOffsets()
-  self.wndStancePopoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight - 98, nRight, nBottom)
+  self.wndStancePopoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight, nRight, nBottom)
   -- self.wndMain:FindChild("StancePopoutBtn"):Show(#wndStancePopout:GetChildren() > 0)
   self.wndMain:FindChild("StancePopoutBtn"):Show(true)
 end
@@ -435,7 +435,7 @@ function VikingActionBarFrame:RedrawMounts()
 
     local nLeft, nTop, nRight, nBottom = wndPopoutFrame:GetAnchorOffsets()
 
-    wndPopoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight - 98, nRight, nBottom)
+    wndPopoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight, nRight, nBottom)
     self:RedrawBarVisibility()
   else
     self.wndMountFlyout:Show(true)
@@ -512,7 +512,7 @@ function VikingActionBarFrame:RedrawPotions()
 
     local nLeft, nTop, nRight, nBottom = self.wndPotionPopoutFrame:GetAnchorOffsets()
 
-    self.wndPotionPopoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight - 98, nRight, nBottom)
+    self.wndPotionPopoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight, nRight, nBottom)
   end
 
   self.wndPotionFlyout:Show(nCount > 0)
