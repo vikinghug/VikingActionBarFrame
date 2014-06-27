@@ -135,4 +135,5 @@
         </Control>
         <Pixie LAnchorPoint="0" LAnchorOffset="0" TAnchorPoint="0" TAnchorOffset="0" RAnchorPoint="1" RAnchorOffset="0" BAnchorPoint="1" BAnchorOffset="0" Sprite="VikingSprites:Gradient128" BGColor="22141122" TextColor="black" Rotation="0" Font="Default"/>
     </Form>
+    <SpriteFile Name="..\VikingLibrary\VikingSprites.xml"/>
 </Forms>
