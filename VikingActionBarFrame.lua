@@ -60,7 +60,7 @@ function VikingActionBarFrame:OnDocumentReady()
   Apollo.RegisterEventHandler("UpdateInventory",              "OnUpdateInventory", self)
 
 	--Test solution tooltip with slashcommand
-  Apollo.RegisterSlashCommand("VTooltip", "OnVikingTooltipOn", self)
+  Apollo.RegisterSlashCommand("vui", "OnVikingUISlashCommand", self)
 
   self.wndShadow = Apollo.LoadForm(self.xmlDoc, "Shadow", "FixedHudStratumLow", self)
   self.wndBar2 = Apollo.LoadForm(self.xmlDoc, "Bar2ButtonContainer", "FixedHudStratum", self)
@@ -438,7 +438,7 @@ function VikingActionBarFrame:RedrawMounts()
     wndPopoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight, nRight, nBottom)
     self:RedrawBarVisibility()
   else
-    self.wndMountFlyout:Show(true)
+    self.wndMountFlyout:Show(false)
   end
 end
 
@@ -447,6 +447,7 @@ function VikingActionBarFrame:OnMountBtn(wndHandler, wndControl)
 
   self.wndMountFlyout:FindChild("MountPopoutFrame"):Show(true)
   self:RedrawSelectedMounts()
+  self.wndMountFlyout:FindChild("MountPopoutFrame"):Show(false)
 end
 
 function VikingActionBarFrame:RedrawPotions()
@@ -584,18 +585,17 @@ end
 -- Solution for tooltip at cursor option
 -- on SlashCommand "/VTooltip"
 
-function VikingActionBarFrame:OnVikingTooltipOn()
-
-	if VikingTooltipCursor == false then
-	VikingTooltipCursor = true
-	ChatSystemLib.PostOnChannel(2,"VikinghugUI_ActionBar: ToolTip will show at Cursor")
-	else
-	VikingTooltipCursor = false
-	ChatSystemLib.PostOnChannel(2,"VikinghugUI_ActionBar: ToolTip will not show at Cursor")
-	end
-
-  Event_FireGenericEvent("Options_UpdateActionBarTooltipLocation")
-
+function VikingActionBarFrame:OnVikingUISlashCommand(strCmd, strParam)
+  if string.find(strParam, "actiontooltip") == 1 then
+    if string.find(strParam, "1") == 15 then
+      VikingTooltipCursor = true
+      Print("ActionBar ToolTips will show at Cursor")
+    elseif string.find(strParam, "0") == 15 then
+      VikingTooltipCursor = false
+      Print("ActionBar ToolTips will not show at Cursor")
+    end
+  end
+Event_FireGenericEvent("Options_UpdateActionBarTooltipLocation")
 end
 
 function VikingActionBarFrame:OnUpdateActionBarTooltipLocation()
