@@ -14,6 +14,7 @@ require "AbilityBook"
 require "ActionSetLib"
 require "AttributeMilestonesLib"
 require "Tooltip"
+require "HousingLib"
 
 
 local VikingActionBarFrame = {}
@@ -49,7 +50,8 @@ function VikingActionBarFrame:OnDocumentReady()
 
   Apollo.RegisterEventHandler("CharacterCreated",             "OnCharacterCreated", self)
 
-  Apollo.RegisterEventHandler("AbilityBookChange",            "RedrawMounts", self)
+  Apollo.RegisterEventHandler("AbilityBookChange",      "OnAbilityBookChange", self)
+  Apollo.RegisterEventHandler("GuildResult",          "OnGuildResult", self)
   Apollo.RegisterEventHandler("StanceChanged",              "RedrawStances", self)
 
   Apollo.RegisterEventHandler("ShowActionBarShortcut",          "OnShowActionBarShortcut", self)
@@ -58,6 +60,7 @@ function VikingActionBarFrame:OnDocumentReady()
   Apollo.RegisterEventHandler("Options_UpdateActionBarTooltipLocation",   "OnUpdateActionBarTooltipLocation", self)
   Apollo.RegisterEventHandler("ActionBarNonSpellShortcutAddFailed",     "OnActionBarNonSpellShortcutAddFailed", self)
   Apollo.RegisterEventHandler("UpdateInventory",              "OnUpdateInventory", self)
+  Apollo.RegisterEventHandler("Tutorial_RequestUIAnchor",   "OnTutorial_RequestUIAnchor", self)
 
 	--Test solution tooltip with slashcommand
   Apollo.RegisterSlashCommand("vui", "OnVikingUISlashCommand", self)
@@ -72,6 +75,9 @@ function VikingActionBarFrame:OnDocumentReady()
   self.wndStanceFlyout = self:CreateFlyout(self.wndMain:FindChild("StanceContainer"), 2)
   self.wndMountFlyout = self:CreateFlyout(self.wndMain:FindChild("MountContainer"), 26)
   self.wndPotionFlyout = self:CreateFlyout(self.wndMain:FindChild("PotionContainer"), 27)
+  self.wndRecallFlyout = self:CreateFlyout(self.wndMain:FindChild("RecallContainer"), 18)
+
+  Apollo.RegisterTimerHandler("RedrawRecallTimer", "RedrawRecalls", self)
 
   g_wndActionBarResources = Apollo.LoadForm(self.xmlDoc, "Resources", "FixedHudStratumLow", self) -- Do not rename. This is global and used by other forms as a parent.
 
@@ -156,6 +162,7 @@ function VikingActionBarFrame:InitializeBars()
   self:RedrawStances()
   self:RedrawMounts()
   self:RedrawPotions()
+  self:RedrawRecalls()
 
   local nVisibility = Apollo.GetConsoleVariable("hud.skillsBarDisplay")
 
@@ -678,6 +685,82 @@ function VikingActionBarFrame:UpdateFlyoutSize(wndFlyout)
   end
 
   wndFlyout:GetParent():Show(nCount > 0)
+end
+
+function VikingActionBarFrame:RedrawRecalls()
+  local wndPopoutList = self.wndRecallFlyout:FindChild("PopoutFrame:PopoutList")
+
+  local tBindList = self:GetBindList()
+
+  wndPopoutList:DestroyChildren()
+
+  for idx, nRecallCommand in pairs(tBindList) do
+    local wndRecallEntry = Apollo.LoadForm(self.xmlDoc, "RecallEntry", wndPopoutList, self)
+    wndRecallEntry:FindChild("RecallEntryBtn"):SetContentId(nRecallCommand)
+  end
+
+  self:UpdateFlyoutSize(self.wndRecallFlyout)
+
+  GameLib.SetDefaultRecallCommand(tBindList[0] or GameLib.CodeEnumRecallCommand.BindPoint)
+  self.wndRecallFlyout:FindChild("ActionBarBtn"):SetContentId(GameLib.GetDefaultRecallCommand())
+end
+
+function VikingActionBarFrame:GetBindList()
+  local tBinds = {}
+
+  if GameLib.HasBindPoint() == true then
+    table.insert(tBinds, GameLib.CodeEnumRecallCommand.BindPoint)
+  end
+
+  if HousingLib.IsResidenceOwner() == true then
+    table.insert(tBinds, GameLib.CodeEnumRecallCommand.House)
+  end
+
+  for key, guildCurr in pairs(GuildLib.GetGuilds()) do
+    if guildCurr:GetType() == GuildLib.GuildType_WarParty then
+      table.insert(tBinds, GameLib.CodeEnumRecallCommand.Warplot)
+      break
+    end
+  end
+
+  for idx, tSpell in pairs(AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Misc) or {}) do
+    if tSpell.bIsActive then
+      if tSpell.nId == GameLib.GetTeleportIlliumSpell():GetBaseSpellId() then
+        table.insert(tBinds, GameLib.CodeEnumRecallCommand.Illium)
+      elseif tSpell.nId == GameLib.GetTeleportThaydSpell():GetBaseSpellId() then
+        table.insert(tBinds, GameLib.CodeEnumRecallCommand.Thayd)
+      end
+    end
+  end
+
+  return tBinds
+end
+
+function VikingActionBarFrame:OnGuildResult(guildCurr, strName, nRank, eResult)
+  local tResults = {
+    [GuildLib.GuildResult_GuildDisbanded] = 0,
+    [GuildLib.GuildResult_KickedYou] = 1,
+    [GuildLib.GuildResult_YouQuit] = 2,
+    [GuildLib.GuildResult_YouJoined] = 3,
+    [GuildLib.GuildResult_YouCreated] = 4
+  }
+
+  if tResults[eResult] ~= nil then
+    Apollo.CreateTimer("RedrawRecallTimer", 0.001, false)
+  end
+end
+
+function VikingActionBarFrame:OnAbilityBookChange()
+  self:RedrawMounts()
+  self:RedrawRecalls()
+end
+
+function VikingActionBarFrame:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
+  if eAnchor == GameLib.CodeEnumTutorialAnchor.Recall then
+    local tRect = {}
+    tRect.l, tRect.t, tRect.r, tRect.b = self.wndRecallFlyout:GetRect()
+    Event_FireGenericEvent("Tutorial_RequestUIAnchorResponse", eAnchor, idTutorial, strPopupText, tRect)
+  end
 end
 
 local VikingActionBarFrameInst = VikingActionBarFrame:new()
