@@ -467,7 +467,7 @@ function VikingActionBarFrame:ShowVehicleBar(nWhichBar, bIsVisible, nNumShortcut
   local wndVehicleBar = self.wndMain:FindChild("VehicleBarMain")
   wndVehicleBar:Show(bIsVisible)
 
-  self.wndMain:FindChild("StanceFlyout"):Show(not bIsVisible)
+  self.wndStanceFlyout:Show(not bIsVisible)
   self.wndMain:FindChild("Bar1ButtonSmallContainer"):Show(not bIsVisible)
 
   self.wndBar1:Show(not bIsVisible)
