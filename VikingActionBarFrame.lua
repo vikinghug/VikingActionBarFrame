@@ -77,9 +77,6 @@ function VikingActionBarFrame:OnDocumentReady()
 
   Event_FireGenericEvent("ActionBarLoaded")
 
-  self.nSelectedMount = nil
-  self.nSelectedPotion = nil
-
   self.wndMain:Show(false)
 
   -- TODO: Figure out why Stances, Mounts and Potions break w/o this hack.
