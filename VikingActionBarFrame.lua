@@ -78,6 +78,7 @@ function VikingActionBarFrame:OnDocumentReady()
   self.wndRecallFlyout = self:CreateFlyout(self.wndMain:FindChild("RecallContainer"), 18)
 
   Apollo.RegisterTimerHandler("RedrawRecallTimer", "RedrawRecalls", self)
+  Apollo.RegisterTimerHandler("CloseRecallTimer", "CloseRecallFlyout", self)
 
   g_wndActionBarResources = Apollo.LoadForm(self.xmlDoc, "Resources", "FixedHudStratumLow", self) -- Do not rename. This is global and used by other forms as a parent.
 
@@ -703,6 +704,14 @@ function VikingActionBarFrame:RedrawRecalls()
 
   GameLib.SetDefaultRecallCommand(tBindList[0] or GameLib.CodeEnumRecallCommand.BindPoint)
   self.wndRecallFlyout:FindChild("ActionBarBtn"):SetContentId(GameLib.GetDefaultRecallCommand())
+end
+
+function VikingActionBarFrame:OnRecallBtn(wndHandler, wndControl)
+  Apollo.CreateTimer("CloseRecallTimer", 0.001, false)
+end
+
+function VikingActionBarFrame:CloseRecallFlyout()
+  self.wndRecallFlyout:FindChild("PopoutFrame"):Show(false)
 end
 
 function VikingActionBarFrame:GetBindList()
