@@ -2,4 +2,5 @@
     <Script Name="VikingActionBarFrame.lua"/>
     <Form Name="VikingActionBarFrame.xml"/>
     <ReplaceAddon Name="ActionBarFrame"/>
+    <ReplaceAddon Name="RecallFrame"/>
 </Addon>
