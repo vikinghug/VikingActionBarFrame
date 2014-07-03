@@ -385,7 +385,7 @@ function VikingActionBarFrame:RedrawMounts()
   end
 
   if tSelectedSpellObj == nil and #tMountList > 0 then
-    tSelectedSpellObj = tMountList[1].spellObject
+    tSelectedSpellObj = tMountList[1]
   end
 
   if tSelectedSpellObj ~= nil then
