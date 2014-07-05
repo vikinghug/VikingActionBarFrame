@@ -61,6 +61,8 @@ function VikingActionBarFrame:GetAsyncLoadStatus()
 end
 
 function VikingActionBarFrame:Setup()
+  g_ActionBarLoaded = false
+  
   Apollo.RegisterEventHandler("UnitEnteredCombat",            "OnUnitEnteredCombat", self)
   Apollo.RegisterEventHandler("PlayerChanged",              "InitializeBars", self)
   Apollo.RegisterEventHandler("WindowSizeChanged",            "InitializeBars", self)
@@ -101,6 +103,7 @@ function VikingActionBarFrame:Setup()
   
   self.wndMain:Show(false)
 
+  g_ActionBarLoaded = true
   Event_FireGenericEvent("ActionBarLoaded")
   Event_FireGenericEvent("ActionBarReady", self.wndMain)
 
