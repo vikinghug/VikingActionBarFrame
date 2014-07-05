@@ -34,21 +34,38 @@ end
 
 function VikingActionBarFrame:OnLoad()
   self.xmlDoc = XmlDoc.CreateFromFile("VikingActionBarFrame.xml")
-  self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 
   -- Load our sprites
 end
 
-function VikingActionBarFrame:OnDocumentReady()
-  g_ActionBarLoaded = false
+function VikingActionBarFrame:GetAsyncLoadStatus()
+  if not (self.xmlDoc and self.xmlDoc:IsLoaded()) then
+    return Apollo.AddonLoadStatus.Loading
+  end 
 
+  if not self.unitPlayer then
+    self.unitPlayer = GameLib.GetPlayerUnit()
+
+    if not self.unitPlayer then
+      return Apollo.AddonLoadStatus.Loading
+    end
+  end
+  
+  if not (Tooltip and Tooltip.GetSpellTooltipForm) then
+    return Apollo.AddonLoadStatus.Loading
+  end
+  
+  self:Setup()
+
+  return Apollo.AddonLoadStatus.Loaded
+end
+
+function VikingActionBarFrame:Setup()
   Apollo.RegisterEventHandler("UnitEnteredCombat",            "OnUnitEnteredCombat", self)
   Apollo.RegisterEventHandler("PlayerChanged",              "InitializeBars", self)
   Apollo.RegisterEventHandler("WindowSizeChanged",            "InitializeBars", self)
   Apollo.RegisterEventHandler("OptionsUpdated_HUDPreferences",      "InitializeBars", self)
   Apollo.RegisterEventHandler("PlayerLevelChange",            "InitializeBars", self)
-
-  Apollo.RegisterEventHandler("CharacterCreated",             "OnCharacterCreated", self)
 
   Apollo.RegisterEventHandler("AbilityBookChange",      "OnAbilityBookChange", self)
   Apollo.RegisterEventHandler("GuildResult",          "OnGuildResult", self)
@@ -81,20 +98,18 @@ function VikingActionBarFrame:OnDocumentReady()
   Apollo.RegisterTimerHandler("CloseRecallTimer", "CloseRecallFlyout", self)
 
   g_wndActionBarResources = Apollo.LoadForm(self.xmlDoc, "Resources", "FixedHudStratumLow", self) -- Do not rename. This is global and used by other forms as a parent.
-
-  Event_FireGenericEvent("ActionBarLoaded")
-
+  
   self.wndMain:Show(false)
 
-  -- TODO: Figure out why Stances, Mounts and Potions break w/o this hack.
-  Apollo.RegisterTimerHandler("ActionBarFrameTimer_DelayedInit", "OnCharacterCreated", self)
-  Apollo.CreateTimer("ActionBarFrameTimer_DelayedInit", 0.5, false)
-  Apollo.StartTimer("ActionBarFrameTimer_DelayedInit")
+  Event_FireGenericEvent("ActionBarLoaded")
+  Event_FireGenericEvent("ActionBarReady", self.wndMain)
 
-  g_ActionBarLoaded = true
+  self:InitializeBars()
 
-  if GameLib.GetPlayerUnit() ~= nil then
-    self:OnCharacterCreated()
+  if self.tCurrentVehicleInfo and unitPlayer:IsInVehicle() then
+    self:OnShowActionBarShortcut(self.tCurrentVehicleInfo.nBar, true, self.tCurrentVehicleInfo.nNumShortcuts)
+  else
+    self.tCurrentVehicleInfo = nil
   end
 end
 
@@ -600,25 +615,6 @@ end
 
 function VikingActionBarFrame:OnActionBarNonSpellShortcutAddFailed()
   --TODO: Print("You can not add that to your Limited Action Set bar.")
-end
-
-function VikingActionBarFrame:OnCharacterCreated()
-  local unitPlayer = GameLib.GetPlayerUnit()
-
-  if not self.bCharacterLoaded and unitPlayer and unitPlayer:IsValid() then
-    self.bCharacterLoaded = true
-    Apollo.StopTimer("ActionBarFrameTimer_DelayedInit")
-    Event_FireGenericEvent("ActionBarReady", self.wndMain)
-    self:InitializeBars()
-
-    if self.tCurrentVehicleInfo and unitPlayer:IsInVehicle() then
-      self:OnShowActionBarShortcut(self.tCurrentVehicleInfo.nBar, true, self.tCurrentVehicleInfo.nNumShortcuts)
-    else
-      self.tCurrentVehicleInfo = nil
-    end
-  else
-    Apollo.StartTimer("ActionBarFrameTimer_DelayedInit")
-  end
 end
 
 function VikingActionBarFrame:CreateFlyout(wndContainer, nContentID)
