@@ -91,10 +91,11 @@ function VikingActionBarFrame:Setup()
   self.wndMain = Apollo.LoadForm(self.xmlDoc, "ActionBarFrameForm", "FixedHudStratum", self)
   self.wndBar1 = self.wndMain:FindChild("Bar1ButtonContainer")
 
-  self.wndStanceFlyout = self:CreateFlyout(self.wndMain:FindChild("StanceContainer"), 2)
-  self.wndMountFlyout = self:CreateFlyout(self.wndMain:FindChild("MountContainer"), 26)
-  self.wndPotionFlyout = self:CreateFlyout(self.wndMain:FindChild("PotionContainer"), 27)
-  self.wndRecallFlyout = self:CreateFlyout(self.wndMain:FindChild("RecallContainer"), 18)
+  self.wndStanceFlyout = self:CreateFlyout(self.wndMain:FindChild("StanceContainer"), "GCBar", 2)
+  self.wndMountFlyout = self:CreateFlyout(self.wndMain:FindChild("MountContainer"), "GCBar", 26)
+  self.wndPotionFlyout = self:CreateFlyout(self.wndMain:FindChild("PotionContainer"), "GCBar", 27)
+  self.wndRecallFlyout = self:CreateFlyout(self.wndMain:FindChild("RecallContainer"), "GCBar", 18)
+  self.wndPathFlyout = self:CreateFlyout(self.wndMain:FindChild("PathContainer"), "LASBar", 9)
 
   Apollo.RegisterTimerHandler("RedrawRecallTimer", "RedrawRecalls", self)
   Apollo.RegisterTimerHandler("CloseRecallTimer", "CloseRecallFlyout", self)
@@ -182,6 +183,7 @@ function VikingActionBarFrame:InitializeBars()
   self:RedrawMounts()
   self:RedrawPotions()
   self:RedrawRecalls()
+  self:RedrawPath()
 
   local nVisibility = Apollo.GetConsoleVariable("hud.skillsBarDisplay")
 
@@ -223,15 +225,18 @@ function VikingActionBarFrame:InitializeBars()
         wndCurr:FindChild("Cover"):Show(true)
       end
     elseif idx < 11 then -- 9 to 10
-      wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemMed", self.wndMain:FindChild("Bar1ButtonSmallContainer:Buttons"), self)
-      wndActionBarBtn = wndCurr:FindChild("ActionBarBtn")
-      wndActionBarBtn:SetContentId(idx - 1)
+      -- we'll skip 10 since it has been promoted to a flyout
+      if idx == 9 then
+        wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemMed", self.wndMain:FindChild("Bar1ButtonSmallContainer:Buttons"), self)
+        wndActionBarBtn = wndCurr:FindChild("ActionBarBtn")
+        wndActionBarBtn:SetContentId(idx - 1)
 
-      wndCurr:FindChild("LockSprite"):Show(false)
-      wndCurr:FindChild("Cover"):Show(true)
+        wndCurr:FindChild("LockSprite"):Show(false)
+        wndCurr:FindChild("Cover"):Show(true)
 
-      if ActionSetLib.IsSlotUnlocked(idx - 1) ~= ActionSetLib.CodeEnumLimitedActionSetResult.Ok then
-        wndCurr:SetTooltip(idx == 9 and Apollo.GetString("ActionBarFrame_LockedGadgetSlot") or Apollo.GetString("VikingActionBarFrame_LockedPathSlot"))
+        if ActionSetLib.IsSlotUnlocked(idx - 1) ~= ActionSetLib.CodeEnumLimitedActionSetResult.Ok then
+          wndCurr:SetTooltip(Apollo.GetString("ActionBarFrame_LockedGadgetSlot"))
+        end
       end
     elseif idx < 23 then -- 11 to 22
       wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemSmall", self.wndBar2, self)
@@ -388,6 +393,30 @@ function VikingActionBarFrame:OnStanceBtn(wndHandler, wndControl)
   GameLib.SetCurrentClassInnateAbilityIndex(wndHandler:GetData())
 end
 
+function VikingActionBarFrame:RedrawPath()
+  local tPathAbilities = AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Path) or {}
+  local tPathList = {}
+
+  for idx, tBaseAbility in pairs(tPathAbilities) do
+    if tBaseAbility.bIsActive then
+      tPathList[idx] = tBaseAbility.tTiers[tBaseAbility.nCurrentTier].splObject
+    end
+  end
+
+  self:RepopulateFlyout(self.wndPathFlyout, tPathList, "Path")
+end
+
+function VikingActionBarFrame:OnPathBtn( wndHandler, wndControl, eMouseButton )
+  local tActionSet = ActionSetLib.GetCurrentActionSet()
+
+  if tActionSet then
+    tActionSet[10] = wndControl:GetData():GetBaseSpellId()
+    ActionSetLib.RequestActionSetChanges(tActionSet)
+  end
+
+  self.wndPathFlyout:FindChild("PopoutFrame"):Show(false)
+end
+
 function VikingActionBarFrame:RedrawMounts()
   local tMounts = AbilityBook.GetAbilitiesList(Spell.CodeEnumSpellTag.Mount) or {}
   local tMountList = {}
@@ -535,7 +564,7 @@ Event_FireGenericEvent("Options_UpdateActionBarTooltipLocation")
 end
 
 function VikingActionBarFrame:OnUpdateActionBarTooltipLocation()
-  for idx = 0, 10 do
+  for idx = 0, 9 do
     self:HelperSetTooltipType(self.arBarButtons[idx])
   end
 end
@@ -620,13 +649,19 @@ function VikingActionBarFrame:OnActionBarNonSpellShortcutAddFailed()
   --TODO: Print("You can not add that to your Limited Action Set bar.")
 end
 
-function VikingActionBarFrame:CreateFlyout(wndContainer, nContentID)
+function VikingActionBarFrame:CreateFlyout(wndContainer, strContentType, nContentID)
+  -- to circumvent an API limitation an actionbarbutton template should be made for each different content type
+  -- templates should follow the recipe: "FlyoutBtn_ContentType" eg. "FlyoutBtn_LASBar"
+  
   local wndFlyout = Apollo.LoadForm(self.xmlDoc, "Flyout", wndContainer, self)
   wndFlyout:SetAnchorPoints(0, 0, 1, 1)
   wndFlyout:SetAnchorOffsets(0, 0, 0, 0)
 
+  local wndActionBarBtn = Apollo.LoadForm(self.xmlDoc, "FlyoutBtn_" .. strContentType, wndFlyout, self)
+  wndActionBarBtn:SetName("ActionBarBtn")
+  wndActionBarBtn:SetContentId(nContentID)
+
   wndFlyout:FindChild("PopoutBtn"):AttachWindow(wndFlyout:FindChild("PopoutFrame"))
-  wndFlyout:FindChild("ActionBarBtn"):SetContentId(nContentID)
 
   return wndFlyout
 end
@@ -761,6 +796,7 @@ end
 function VikingActionBarFrame:OnAbilityBookChange()
   self:RedrawMounts()
   self:RedrawRecalls()
+  self:RedrawPath()
 end
 
 function VikingActionBarFrame:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
