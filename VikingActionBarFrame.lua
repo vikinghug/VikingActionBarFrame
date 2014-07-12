@@ -84,7 +84,6 @@ function VikingActionBarFrame:Setup()
 	--Test solution tooltip with slashcommand
   Apollo.RegisterSlashCommand("vui", "OnVikingUISlashCommand", self)
 
-  self.wndShadow = Apollo.LoadForm(self.xmlDoc, "Shadow", "FixedHudStratumLow", self)
   self.wndBar2 = Apollo.LoadForm(self.xmlDoc, "Bar2ButtonContainer", "FixedHudStratum", self)
   self.wndBar3 = Apollo.LoadForm(self.xmlDoc, "Bar3ButtonContainer", "FixedHudStratum", self)
 
@@ -356,8 +355,6 @@ function VikingActionBarFrame:RedrawBarVisibility()
 
   local bActionBarShown = self.wndMain:IsShown()
 
-  self.wndShadow:SetOpacity(0.5)
-  self.wndShadow:Show(true)
   self.wndPotionFlyout:Show(unitPlayer ~= nil and not unitPlayer:IsInVehicle())
 
   local nLeft, nTop, nRight, nBottom = g_wndActionBarResources:GetAnchorOffsets()
