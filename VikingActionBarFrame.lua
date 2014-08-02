@@ -718,7 +718,10 @@ function VikingActionBarFrame:UpdateFlyoutSize(wndFlyout)
 
     if nCount > nMax then
       local nPopLeft, nPopTop, nPopRight, nPopBottom = wndPopoutList:GetAnchorOffsets()
-      nRight = wndPopoutList:GetChildren()[1]:GetWidth() * (math.ceil(nCount/nMax)) - wndFlyout:GetWidth()
+      local nButtonWidth = wndPopoutList:GetChildren()[1]:GetWidth()
+      local nColumns = (math.ceil(nCount/nMax))
+      local nFlyoutWidth = wndFlyout:GetWidth()
+      nRight = nButtonWidth * nColumns - nFlyoutWidth
     end
 
     wndPopoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight, nRight, nBottom)
