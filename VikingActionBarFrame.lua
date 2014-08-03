@@ -84,7 +84,6 @@ function VikingActionBarFrame:Setup()
 	--Test solution tooltip with slashcommand
   Apollo.RegisterSlashCommand("vui", "OnVikingUISlashCommand", self)
 
-  self.wndShadow = Apollo.LoadForm(self.xmlDoc, "Shadow", "FixedHudStratumLow", self)
   self.wndBar2 = Apollo.LoadForm(self.xmlDoc, "Bar2ButtonContainer", "FixedHudStratum", self)
   self.wndBar3 = Apollo.LoadForm(self.xmlDoc, "Bar3ButtonContainer", "FixedHudStratum", self)
 
@@ -239,22 +238,26 @@ function VikingActionBarFrame:InitializeBars()
         end
       end
     elseif idx < 23 then -- 11 to 22
-      wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemSmall", self.wndBar2, self)
-      wndActionBarBtn = wndCurr:FindChild("ActionBarBtn")
-      wndActionBarBtn:SetContentId(idx + 1)
-
-      --hide bars we can't draw due to screen size
-      if (idx - 10) * wndCurr:GetWidth() > self.wndBar2:GetWidth() and self.wndBar2:GetWidth() > 0 then
-        wndCurr:Show(false)
+      if Apollo.GetConsoleVariable("hud.secondaryLeftBarDisplay") then
+        wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemSmall", self.wndBar2, self)
+        wndActionBarBtn = wndCurr:FindChild("ActionBarBtn")
+        wndActionBarBtn:SetContentId(idx + 1)
+        
+        --hide bars we can't draw due to screen size
+        if (idx - 10) * wndCurr:GetWidth() > self.wndBar2:GetWidth() and self.wndBar2:GetWidth() > 0 then
+          wndCurr:Show(false)
+        end
       end
     else -- 23 to 34
-      wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemSmall", self.wndBar3, self)
-      wndActionBarBtn = wndCurr:FindChild("ActionBarBtn")
-      wndActionBarBtn:SetContentId(idx + 1)
+      if Apollo.GetConsoleVariable("hud.secondaryRightBarDisplay") then
+        wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemSmall", self.wndBar3, self)
+        wndActionBarBtn = wndCurr:FindChild("ActionBarBtn")
+        wndActionBarBtn:SetContentId(idx + 1)
 
-      --hide bars we can't draw due to screen size
-      if (idx - 22) * wndCurr:GetWidth() > self.wndBar3:GetWidth() and self.wndBar3:GetWidth() > 0 then
-        wndCurr:Show(false)
+        --hide bars we can't draw due to screen size
+        if (idx - 22) * wndCurr:GetWidth() > self.wndBar3:GetWidth() and self.wndBar3:GetWidth() > 0 then
+          wndCurr:Show(false)
+        end
       end
     end
     self.arBarButtons[idx] = wndActionBarBtn
@@ -356,8 +359,6 @@ function VikingActionBarFrame:RedrawBarVisibility()
 
   local bActionBarShown = self.wndMain:IsShown()
 
-  self.wndShadow:SetOpacity(0.5)
-  self.wndShadow:Show(true)
   self.wndPotionFlyout:Show(unitPlayer ~= nil and not unitPlayer:IsInVehicle())
 
   local nLeft, nTop, nRight, nBottom = g_wndActionBarResources:GetAnchorOffsets()
@@ -711,12 +712,17 @@ function VikingActionBarFrame:UpdateFlyoutSize(wndFlyout)
     local nMax = 7
     local nMaxHeight = (wndPopoutList:ArrangeChildrenVert(0) / nCount) * nMax
     local nHeight = wndPopoutList:ArrangeChildrenVert(0)
-
     nHeight = nHeight <= nMaxHeight and nHeight or nMaxHeight
 
     local nLeft, nTop, nRight, nBottom = wndPopoutFrame:GetAnchorOffsets()
 
+    if nCount > nMax then
+      local nPopLeft, nPopTop, nPopRight, nPopBottom = wndPopoutList:GetAnchorOffsets()
+      nRight = wndPopoutList:GetChildren()[1]:GetWidth() * (math.ceil(nCount/nMax)) - wndFlyout:GetWidth()
+    end
+
     wndPopoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight, nRight, nBottom)
+    wndPopoutList:ArrangeChildrenTiles()
   end
 
   wndFlyout:GetParent():Show(nCount > 0)
