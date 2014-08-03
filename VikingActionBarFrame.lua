@@ -242,7 +242,7 @@ function VikingActionBarFrame:InitializeBars()
         wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemSmall", self.wndBar2, self)
         wndActionBarBtn = wndCurr:FindChild("ActionBarBtn")
         wndActionBarBtn:SetContentId(idx + 1)
-        
+
         --hide bars we can't draw due to screen size
         if (idx - 10) * wndCurr:GetWidth() > self.wndBar2:GetWidth() and self.wndBar2:GetWidth() > 0 then
           wndCurr:Show(false)
@@ -712,17 +712,12 @@ function VikingActionBarFrame:UpdateFlyoutSize(wndFlyout)
     local nMax = 7
     local nMaxHeight = (wndPopoutList:ArrangeChildrenVert(0) / nCount) * nMax
     local nHeight = wndPopoutList:ArrangeChildrenVert(0)
+
     nHeight = nHeight <= nMaxHeight and nHeight or nMaxHeight
 
     local nLeft, nTop, nRight, nBottom = wndPopoutFrame:GetAnchorOffsets()
 
-    if nCount > nMax then
-      local nPopLeft, nPopTop, nPopRight, nPopBottom = wndPopoutList:GetAnchorOffsets()
-      nRight = wndPopoutList:GetChildren()[1]:GetWidth() * (math.ceil(nCount/nMax)) - wndFlyout:GetWidth()
-    end
-
     wndPopoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight, nRight, nBottom)
-    wndPopoutList:ArrangeChildrenTiles()
   end
 
   wndFlyout:GetParent():Show(nCount > 0)
