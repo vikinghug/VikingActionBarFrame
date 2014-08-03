@@ -238,22 +238,26 @@ function VikingActionBarFrame:InitializeBars()
         end
       end
     elseif idx < 23 then -- 11 to 22
-      wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemSmall", self.wndBar2, self)
-      wndActionBarBtn = wndCurr:FindChild("ActionBarBtn")
-      wndActionBarBtn:SetContentId(idx + 1)
+      if Apollo.GetConsoleVariable("hud.secondaryLeftBarDisplay") then
+        wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemSmall", self.wndBar2, self)
+        wndActionBarBtn = wndCurr:FindChild("ActionBarBtn")
+        wndActionBarBtn:SetContentId(idx + 1)
 
-      --hide bars we can't draw due to screen size
-      if (idx - 10) * wndCurr:GetWidth() > self.wndBar2:GetWidth() and self.wndBar2:GetWidth() > 0 then
-        wndCurr:Show(false)
+        --hide bars we can't draw due to screen size
+        if (idx - 10) * wndCurr:GetWidth() > self.wndBar2:GetWidth() and self.wndBar2:GetWidth() > 0 then
+          wndCurr:Show(false)
+        end
       end
     else -- 23 to 34
-      wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemSmall", self.wndBar3, self)
-      wndActionBarBtn = wndCurr:FindChild("ActionBarBtn")
-      wndActionBarBtn:SetContentId(idx + 1)
+      if Apollo.GetConsoleVariable("hud.secondaryRightBarDisplay") then
+        wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemSmall", self.wndBar3, self)
+        wndActionBarBtn = wndCurr:FindChild("ActionBarBtn")
+        wndActionBarBtn:SetContentId(idx + 1)
 
-      --hide bars we can't draw due to screen size
-      if (idx - 22) * wndCurr:GetWidth() > self.wndBar3:GetWidth() and self.wndBar3:GetWidth() > 0 then
-        wndCurr:Show(false)
+        --hide bars we can't draw due to screen size
+        if (idx - 22) * wndCurr:GetWidth() > self.wndBar3:GetWidth() and self.wndBar3:GetWidth() > 0 then
+          wndCurr:Show(false)
+        end
       end
     end
     self.arBarButtons[idx] = wndActionBarBtn
