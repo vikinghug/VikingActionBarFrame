@@ -717,15 +717,13 @@ function VikingActionBarFrame:UpdateFlyoutSize(wndFlyout)
     local nLeft, nTop, nRight, nBottom = wndPopoutFrame:GetAnchorOffsets()
 
     if nCount > nMax then
-      local nPopLeft, nPopTop, nPopRight, nPopBottom = wndPopoutList:GetAnchorOffsets()
       local nButtonWidth = wndPopoutList:GetChildren()[1]:GetWidth()
-      local nColumns = (math.ceil(nCount/nMax))
       local nFlyoutWidth = wndFlyout:GetWidth()
-      nRight = nButtonWidth * nColumns - nFlyoutWidth
-    end
-
+      local nScrollWidth = 13 -- scrollbar seems to be somewhere between 12 and 13 px
+      nRight = nButtonWidth + nScrollWidth - nFlyoutWidth
+    end 
     wndPopoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight, nRight, nBottom)
-    wndPopoutList:ArrangeChildrenTiles()
+    --wndPopoutList:ArrangeChildrenTiles()
   end
 
   wndFlyout:GetParent():Show(nCount > 0)
