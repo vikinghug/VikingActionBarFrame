@@ -41,7 +41,7 @@ end
 function VikingActionBarFrame:GetAsyncLoadStatus()
   if not (self.xmlDoc and self.xmlDoc:IsLoaded()) then
     return Apollo.AddonLoadStatus.Loading
-  end 
+  end
 
   if not self.unitPlayer then
     self.unitPlayer = GameLib.GetPlayerUnit()
@@ -50,11 +50,11 @@ function VikingActionBarFrame:GetAsyncLoadStatus()
       return Apollo.AddonLoadStatus.Loading
     end
   end
-  
+
   if not (Tooltip and Tooltip.GetSpellTooltipForm) then
     return Apollo.AddonLoadStatus.Loading
   end
-  
+
   self:Setup()
 
   return Apollo.AddonLoadStatus.Loaded
@@ -62,7 +62,7 @@ end
 
 function VikingActionBarFrame:Setup()
   g_ActionBarLoaded = false
-  
+
   Apollo.RegisterEventHandler("UnitEnteredCombat",            "OnUnitEnteredCombat", self)
   Apollo.RegisterEventHandler("PlayerChanged",              "InitializeBars", self)
   Apollo.RegisterEventHandler("WindowSizeChanged",            "InitializeBars", self)
@@ -100,7 +100,7 @@ function VikingActionBarFrame:Setup()
   Apollo.RegisterTimerHandler("CloseRecallTimer", "CloseRecallFlyout", self)
 
   g_wndActionBarResources = Apollo.LoadForm(self.xmlDoc, "Resources", "FixedHudStratumLow", self) -- Do not rename. This is global and used by other forms as a parent.
-  
+
   self.wndMain:Show(false)
 
   g_ActionBarLoaded = true
@@ -226,7 +226,7 @@ function VikingActionBarFrame:InitializeBars()
     elseif idx < 11 then -- 9 to 10
       -- we'll skip 10 since it has been promoted to a flyout
       if idx == 9 then
-        wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemMed", self.wndMain:FindChild("Bar1ButtonSmallContainer:Buttons"), self)
+        wndCurr = Apollo.LoadForm(self.xmlDoc, "ActionBarItemBig", self.wndMain:FindChild("Bar1ButtonSmallContainer:Buttons"), self)
         wndActionBarBtn = wndCurr:FindChild("ActionBarBtn")
         wndActionBarBtn:SetContentId(idx - 1)
 
@@ -446,7 +446,7 @@ end
 function VikingActionBarFrame:OnMountBtn(wndHandler, wndControl)
   self.nSelectedMount = wndControl:GetData():GetId()
   GameLib.SetShortcutMount(self.nSelectedMount)
-  
+
   self.wndMountFlyout:FindChild("PopoutFrame"):Show(false)
 end
 
@@ -653,7 +653,7 @@ end
 function VikingActionBarFrame:CreateFlyout(wndContainer, strContentType, nContentID)
   -- to circumvent an API limitation an actionbarbutton template should be made for each different content type
   -- templates should follow the recipe: "FlyoutBtn_ContentType" eg. "FlyoutBtn_LASBar"
-  
+
   local wndFlyout = Apollo.LoadForm(self.xmlDoc, "Flyout", wndContainer, self)
   wndFlyout:SetAnchorPoints(0, 0, 1, 1)
   wndFlyout:SetAnchorOffsets(0, 0, 0, 0)
@@ -668,7 +668,7 @@ function VikingActionBarFrame:CreateFlyout(wndContainer, strContentType, nConten
 end
 
 function VikingActionBarFrame:RepopulateFlyout(wndFlyout, tList, strType)
-  -- tList contains either spellObject or itemObject 
+  -- tList contains either spellObject or itemObject
 
   local wndPopoutList = wndFlyout:FindChild("PopoutFrame:PopoutList")
 
@@ -679,19 +679,19 @@ function VikingActionBarFrame:RepopulateFlyout(wndFlyout, tList, strType)
 
     wndCurr:FindChild(strType .. "BtnIcon"):SetSprite(tObject:GetIcon())
 
-    if strType == "Potion" then 
+    if strType == "Potion" then
       local nCount = tObject:GetBackpackCount()
       if nCount > 1 then wndCurr:FindChild("PotionBtnStackCount"):SetText(nCount) end
-    elseif strType == "Stance" then 
+    elseif strType == "Stance" then
       local strKeyBinding = GameLib.GetKeyBinding("SetStance"..idx)
-      wndCurr:FindChild("StanceBtnKeyBind"):SetText(strKeyBinding == "<Unbound>" and "" or strKeyBinding) 
+      wndCurr:FindChild("StanceBtnKeyBind"):SetText(strKeyBinding == "<Unbound>" and "" or strKeyBinding)
     end
 
     wndCurr:SetData(strType == "Stance" and idx or tObject)
 
     if Tooltip then
       wndCurr:SetTooltipDoc(nil)
-      
+
       if strType == "Potion" then
         Tooltip.GetItemTooltipForm(self, wndCurr, tObject, {})
       else
@@ -724,7 +724,7 @@ function VikingActionBarFrame:UpdateFlyoutSize(wndFlyout)
       wndPopoutList:AddStyle("VScroll")
     else
       wndPopoutList:RemoveStyle("VScroll")
-    end 
+    end
     wndPopoutFrame:SetAnchorOffsets(nLeft, nBottom - nHeight, nRight, nBottom)
     --wndPopoutList:ArrangeChildrenTiles()
   end
