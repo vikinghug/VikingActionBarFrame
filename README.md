@@ -6,6 +6,7 @@
 
 * [VikingActionBarShortcut] (https://github.com/vikinghug/VikingActionBarShortcut)
 * [VikingClassResources] (https://github.com/vikinghug/VikingClassResources)
+* [VikingLibrary] (https://github.com/vikinghug/VikingLibrary)
 
 ### Replaces Carbine:
 
