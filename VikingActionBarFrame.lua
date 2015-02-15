@@ -106,7 +106,14 @@ function VikingActionBarFrame:GetDefaults()
   local tColors = VikingLib.Settings.GetColors()
 
   return {
-    char = {}
+    char = {
+      SkillsBar = {
+        Columns = 9,
+        X = 0,
+        Y = 0,
+        Scale = 1,
+      }
+    }
   }
 
 end
@@ -126,21 +133,21 @@ function VikingActionBarFrame:OnCharacterLoaded()
 
 
   -- SkillsBar
-  self.tSkillsBar = self:CreateBar('Skills')
+  self.tSkillsBar = self:CreateBar('SkillsBar')
   self:PositionItems(self.tSkillsBar)
 end
 
 function VikingActionBarFrame:CreateBar(name)
 
-  local wnd = Apollo.LoadForm(self.xmlDoc, "SkillsBar", "FixedHudStratum", self)
+  local wnd = Apollo.LoadForm(self.xmlDoc, name, "FixedHudStratum", self)
 
   local tFrame = {
     name    = name,
     wnd     = wnd,
-    Columns = 9,
-    X       = 0,
-    Y       = 0,
-    Scale   = 1,
+    Columns = self.db.char.SkillsBar.Columns,
+    X       = self.db.char.SkillsBar.X,
+    Y       = self.db.char.SkillsBar.Y,
+    Scale   = self.db.char.SkillsBar.Scale,
     total   = 9,
     width   = 48,
     height  = 60,
@@ -165,10 +172,10 @@ function VikingActionBarFrame:CreateBar(name)
 
 end
 
-
 function VikingActionBarFrame:PositionItems(tBar)
+  local tSettings = self.db.char[tBar.name]
   local wnd = tBar.wnd
-  local Columns = tBar.Columns
+  local Columns = tSettings.Columns
   local width = tBar.width
   local height = tBar.height
   local xOffset = 0
@@ -181,7 +188,10 @@ function VikingActionBarFrame:PositionItems(tBar)
 
     xOffset = width * col
     yOffset = height * row
-    item:SetAnchorOffsets(tBar.X + xOffset, tBar.Y + yOffset, tBar.X + xOffset + width, tBar.Y + yOffset + height)
+    item:SetAnchorOffsets(tSettings.X + xOffset,
+                          tSettings.Y + yOffset,
+                          tSettings.X + xOffset + width,
+                          tSettings.Y + yOffset + height)
   end
 
 end
@@ -210,9 +220,7 @@ function VikingActionBarFrame:OnSliderChange( wndHandler, wndControl, fNewValue,
   local SectionName = wndSection:GetName()
   local ElementName = wndHandler:GetParent():GetName()
 
-  Print(SectionName .. " : " .. ElementName)
-
-  self['t' .. SectionName][ElementName] = fNewValue
+  self.db.char[SectionName][ElementName] = fNewValue
   self:PositionItems(self['t' .. SectionName])
   wndHandler:FindChild('Value'):SetText(fNewValue)
 
